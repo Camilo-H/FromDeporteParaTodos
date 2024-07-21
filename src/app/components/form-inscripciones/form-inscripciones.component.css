@@ -1,0 +1,18 @@
+.container{
+    background-color: aqua;
+    margin-top: 10px ;
+    padding: 1%;
+}
+.titulo{
+    text-align: center;
+}
+.button:hover{
+    background-color: #FB7E29; /* el botón cambia a este color cuando se pone el cursor encima)*/
+    color: #fff; /* el texto del botón cambia a este color cuando se pone encima el cursor)*/
+    }
+.btn{
+    margin: 10px;
+    
+}
+
+    

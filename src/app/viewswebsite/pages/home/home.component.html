@@ -1,0 +1,64 @@
+<div class="container d-flex justify-content-center">
+    <div class="text-home col-lg-10 shadow p-3 mb-5 bg-white rounded">
+        <h1 class="tittles ">Deporte para todos</h1>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+            It has survived not only five centuries, but also the leap into electronic typesetting,
+            remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets
+            containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker
+            including versions of Lorem Ipsum.
+        </p>
+    </div>
+</div>
+
+<div style=" width: 80%; margin: 0 auto;">
+    <mat-grid-list [cols]="colsize" rowHeight="330">
+        <mat-grid-tile *ngFor="let item of listaEscenarios" [colspan]="1" [rowspan]="1" [style.background]="">
+            <mat-card class="mycard shadow">
+                <img mat-card-image src="./assets/imagesSystem/deporte.jpg" alt="" (click)="abrirCursosDeportivos()">
+                <mat-card-content class="contenido">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-gear" viewBox="0 0 16 16" (click)="configurarTipoCurso()">
+                        <path
+                            d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0" />
+                        <path
+                            d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z" />
+                    </svg>
+                    <mat-card-title class="card_title">Semillero deportivo </mat-card-title>
+                    <div class="d-flex  justify-content-center">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal"
+                            style="border: none; background-color: transparent; color: black;">
+                            Ver información
+                        </button>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title col-11 text-center" id="exampleModalLabel">Información de curso</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>"Es una cancha con el sistema de revestimiento acrílico compuesto por seis (6) capas,
+                    utilizado en canchas de hockey, pistas de patinaje, ciclo rutas, zonas de bicicletas.
+                    también se puede utilizar para canchas de tenis, baloncesto, fútbol sala y voleibol.
+                    El sistema es 100% acrílico, obteniendo una combinación de capas de textura y acabado no
+                    abrasivo, Es una cancha con el sistema de revestimiento acrílico compuesto por seis (6) capas,
+                    utilizado en canchas de hockey, pistas de patinaje, ciclo rutas, zonas de bicicletas.
+                    también se puede utilizar para canchas de tenis, baloncesto, fútbol sala y voleibol.
+                    El sistema es 100% acrílico, obteniendo una combinación de capas de textura y acabado no abrasivo"
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
