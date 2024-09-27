@@ -1,0 +1,53 @@
+
+/* Kelvin*/
+.body {
+    height: 100%;
+    padding-top: 100px;
+
+}
+
+.login {
+    width: 100%;
+    text-align: center;
+}
+
+.ancho {
+    width: 60%;
+}
+
+.btnLogin {
+    background-color: rgb(15, 32, 65);
+    color: #fff;
+}
+
+.spinner {
+    margin: 0 auto;
+}
+
+.imagen_login {
+    padding: 0px 0px 0px 0px;
+}
+
+.page {
+    padding: 0px;
+}
+
+.centrar {
+    //padding-left: 120px;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.btnCancelar {
+    background: rgb(175, 0, 0);
+    color: #fff;
+    width: 110%;
+}
+
+.btnAceptar {
+    background-color: rgb(15, 32, 65);
+    color: #fff;
+    width: 110%;
+}

@@ -1,4 +1,42 @@
 /* You can add global styles to this file, and also import other style files */
+/*
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+main {
+  flex: 1;
+  padding: 20px;
+}
+*/
+/* styles.css */
+
+/* Establece el tamaño completo de la ventana del navegador */
+html, body {
+  height: 100%;
+}
+
+/* Contenedor principal que usa Flexbox */
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Asegura que el contenedor principal tenga al menos el tamaño de la pantalla */
+}
+
+/* Estilo para el header y footer */
+app-header, app-footer {
+  flex-shrink: 0; /* Evita que se reduzcan en tamaño */
+}
+
+/* Estilo para el home */
+app-home {
+  flex: 1; /* Ocupa el espacio disponible restante */
+}

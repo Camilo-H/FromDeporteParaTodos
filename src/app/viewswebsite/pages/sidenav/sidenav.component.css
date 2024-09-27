@@ -1,0 +1,17 @@
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.toolbar {
+  height: 50px;
+  /* Ajusta la altura de la barra de herramientas */
+  width: 10%;
+  /* Ajusta el ancho de la barra de herramientas */
+  font-size: 16px;
+  /* Ajusta el tamaño de la fuente dentro de la barra de herramientas */
+  background-color: white;
+}
+
+.iconMenu {
+  color: black;
+}

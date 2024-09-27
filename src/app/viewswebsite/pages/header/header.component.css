@@ -30,3 +30,6 @@ a{
 .navbar-right ul li:first-child {
     margin-left: 0; /* Elimina el margen izquierdo del primer elemento */
 }
+.navbar-right ul li a mat-icon {
+    margin-right: 8px; /* Espacio entre el ícono y el texto */
+}

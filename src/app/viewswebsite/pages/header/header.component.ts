@@ -2,10 +2,17 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
+/**Material Modules */
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: 
+  [
+    CommonModule,
+    MatIconModule,
+  ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
