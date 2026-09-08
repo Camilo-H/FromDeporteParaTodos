@@ -93,6 +93,7 @@ export class HomeComponent {
       },
       (error) => {
         console.error('Error al cargar las categorías', error);
+        this.snackBar.open('No se pudieron cargar las categorias, intenta de nuevo', 'Cerrar', { duration: 5000, panelClass: ['snack-error'] });
       }
     );
   }
