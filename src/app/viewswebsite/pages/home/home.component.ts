@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { take } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
@@ -20,6 +21,7 @@ import { CategoriaDTO } from 'src/app/Models/DTOs/categoria-dto';
 import * as bootstrap from 'bootstrap';
 import { PerfilService } from 'src/app/services/perfil.service';
 import { ImagenService } from 'src/app/services/imagen.service';
+import { TokenInterchangeService } from 'src/app/services/token-interchange.service';
 
 @Component({
   selector: 'app-home',
@@ -57,10 +59,16 @@ export class HomeComponent {
     private dialog: MatDialog,
     private perfilService: PerfilService,
     private snackBar: MatSnackBar,
+    private tokenInterchangeService: TokenInterchangeService,
   ) { }
 
   ngOnInit(): void {
-    this.loadCategorias();
+    if (sessionStorage.getItem('dpt_token')) {
+      this.loadCategorias();
+    } else {
+      this.tokenInterchangeService.tokenReady$.pipe(take(1))
+        .subscribe(() => this.loadCategorias());
+    }
     this.breakPointObserver
       .observe([Breakpoints.Handset])
       .subscribe((result) => {

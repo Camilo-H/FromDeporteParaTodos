@@ -92,4 +92,32 @@ describe('TokenInterchangeService', () => {
     expect(errorCaptured.status).toBe(401);
     expect(routerSpy.navigate).not.toHaveBeenCalled();
   });
+
+  // ── tokenReady$ ──────────────────────────────────────────────────────────
+
+  it('tokenReady$ emite void tras guardar dpt_token en respuesta 200', () => {
+    let emitted = false;
+    service.tokenReady$.subscribe(() => { emitted = true; });
+    service.exchangeGoogleToken('id-tok').subscribe();
+    httpMock.expectOne(`${API}/auth/token`).flush({ token: 'tok' });
+    expect(emitted).toBeTrue();
+  });
+
+  it('tokenReady$ NO emite cuando el backend devuelve 404', () => {
+    let emitted = false;
+    service.tokenReady$.subscribe(() => { emitted = true; });
+    service.exchangeGoogleToken('id-tok').subscribe();
+    httpMock.expectOne(`${API}/auth/token`)
+      .flush('Not Found', { status: 404, statusText: 'Not Found' });
+    expect(emitted).toBeFalse();
+  });
+
+  it('tokenReady$ NO emite cuando el backend devuelve 500', () => {
+    let emitted = false;
+    service.tokenReady$.subscribe(() => { emitted = true; });
+    service.exchangeGoogleToken('id-tok').subscribe({ error: () => {} });
+    httpMock.expectOne(`${API}/auth/token`)
+      .flush('Error', { status: 500, statusText: 'Server Error' });
+    expect(emitted).toBeFalse();
+  });
 });

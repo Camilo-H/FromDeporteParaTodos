@@ -1,0 +1,111 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BehaviorSubject, of, Subject, throwError } from 'rxjs';
+import { HomeComponent } from './home.component';
+import { CategoriaService } from 'src/app/services/categoria.service';
+import { ImagenService } from 'src/app/services/imagen.service';
+import { PerfilService } from 'src/app/services/perfil.service';
+import { TokenInterchangeService } from 'src/app/services/token-interchange.service';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { BreakpointObserver } from '@angular/cdk/layout';
+
+describe('HomeComponent', () => {
+  let component: HomeComponent;
+  let fixture: ComponentFixture<HomeComponent>;
+  let categoriaServiceSpy: jasmine.SpyObj<CategoriaService>;
+  let snackSpy: jasmine.SpyObj<MatSnackBar>;
+  let tokenReadySubject: Subject<void>;
+
+  beforeEach(async () => {
+    tokenReadySubject = new Subject<void>();
+    categoriaServiceSpy = jasmine.createSpyObj('CategoriaService', ['getCategorias']);
+    categoriaServiceSpy.getCategorias.and.returnValue(of([]));
+    snackSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
+
+    const imagenSpy   = jasmine.createSpyObj('ImagenService', ['getimagen']);
+    const dialogSpy   = jasmine.createSpyObj('MatDialog', ['open']);
+    const routerSpy   = jasmine.createSpyObj('Router', ['navigate']);
+    const perfilStub  = { perfil$: new BehaviorSubject<string>('Administrador').asObservable() };
+    const tokenStub   = { tokenReady$: tokenReadySubject.asObservable() };
+    const bpStub      = { observe: () => of({ matches: false, breakpoints: {} }) };
+
+    await TestBed.configureTestingModule({
+      imports: [HomeComponent, NoopAnimationsModule],
+      providers: [
+        { provide: CategoriaService,        useValue: categoriaServiceSpy },
+        { provide: ImagenService,           useValue: imagenSpy },
+        { provide: PerfilService,           useValue: perfilStub },
+        { provide: TokenInterchangeService, useValue: tokenStub },
+        { provide: Router,                  useValue: routerSpy },
+        { provide: MatDialog,               useValue: dialogSpy },
+        { provide: BreakpointObserver,      useValue: bpStub },
+      ],
+    })
+    .overrideComponent(HomeComponent, {
+      set: {
+        imports:  [],
+        template: '<div></div>',
+        providers: [{ provide: MatSnackBar, useValue: snackSpy }],
+      },
+    })
+    .compileComponents();
+
+    fixture   = TestBed.createComponent(HomeComponent);
+    component = fixture.componentInstance;
+  });
+
+  afterEach(() => sessionStorage.removeItem('dpt_token'));
+
+  it('debería crearse correctamente', () => {
+    sessionStorage.removeItem('dpt_token');
+    fixture.detectChanges();
+    expect(component).toBeTruthy();
+  });
+
+  // ── ngOnInit: rama dpt_token presente (refresh) ──────────────────────────
+
+  it('si dpt_token está en sessionStorage, llama getCategorias() inmediatamente', () => {
+    sessionStorage.setItem('dpt_token', 'existing-token');
+    fixture.detectChanges();
+    expect(categoriaServiceSpy.getCategorias).toHaveBeenCalledTimes(1);
+  });
+
+  // ── ngOnInit: rama dpt_token ausente (primer login) ──────────────────────
+
+  it('si dpt_token NO está, no llama getCategorias() en ngOnInit', () => {
+    sessionStorage.removeItem('dpt_token');
+    fixture.detectChanges();
+    expect(categoriaServiceSpy.getCategorias).not.toHaveBeenCalled();
+  });
+
+  it('si dpt_token NO está y tokenReady$ emite, llama getCategorias() una vez', () => {
+    sessionStorage.removeItem('dpt_token');
+    fixture.detectChanges();
+    tokenReadySubject.next();
+    expect(categoriaServiceSpy.getCategorias).toHaveBeenCalledTimes(1);
+  });
+
+  it('take(1): un segundo emit de tokenReady$ no vuelve a llamar getCategorias()', () => {
+    sessionStorage.removeItem('dpt_token');
+    fixture.detectChanges();
+    tokenReadySubject.next();
+    tokenReadySubject.next();
+    expect(categoriaServiceSpy.getCategorias).toHaveBeenCalledTimes(1);
+  });
+
+  // ── loadCategorias: feedback de error ────────────────────────────────────
+
+  it('error HTTP en getCategorias() muestra snackbar al usuario', () => {
+    sessionStorage.setItem('dpt_token', 'token');
+    categoriaServiceSpy.getCategorias.and.returnValue(throwError(() => new Error('500')));
+    spyOn(console, 'error');
+    fixture.detectChanges();
+    expect(snackSpy.open).toHaveBeenCalledWith(
+      'No se pudieron cargar las categorias, intenta de nuevo',
+      'Cerrar',
+      jasmine.objectContaining({ duration: 5000 }),
+    );
+  });
+});
