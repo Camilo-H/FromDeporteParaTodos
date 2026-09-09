@@ -26,6 +26,7 @@ export class AuthService {
       clientId: '744420107810-h8mprfrme2cav6226hdl960gl40qaebp.apps.googleusercontent.com',
       redirectUri: window.location.origin + '/home',
       scope: 'openid profile email',
+      customQueryParams: { prompt: 'select_account' },
     }
 
     this.oauthService.configure(config);
