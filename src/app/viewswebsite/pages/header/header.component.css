@@ -33,3 +33,9 @@ a{
 .navbar-right ul li a mat-icon {
     margin-right: 8px;
 }
+
+.rol-tag {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.8rem;
+    font-style: italic;
+}

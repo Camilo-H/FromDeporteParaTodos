@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { PerfilDTO } from '../Models/DTOs/perfil-tdo';
 import { catchError, throwError, Observable, from, filter, take } from 'rxjs';
 import { TokenInterchangeService } from './token-interchange.service';
+import { PerfilService } from './perfil.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class AuthService {
     private oauthService: OAuthService,
     private http: HttpClient,
     private tokenInterchangeService: TokenInterchangeService,
+    private perfilService: PerfilService,
   ) {
     this.initLogin();
   }
@@ -57,6 +59,10 @@ export class AuthService {
       } else {
         console.log('No hay usuario autenticado');
       }
+      const role = sessionStorage.getItem('dpt_role');
+      if (role) {
+        this.perfilService.setPerfil(role);
+      }
     });
   }
 
@@ -76,6 +82,8 @@ export class AuthService {
   logout() {
     this.oauthService.logOut();
     sessionStorage.removeItem('dpt_token');
+    sessionStorage.removeItem('dpt_role');
+    sessionStorage.removeItem('dpt_perfil_id');
   }
 
   getProfile() {

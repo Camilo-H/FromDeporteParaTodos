@@ -106,3 +106,9 @@ a {
 .navbar-right ul li a {
   color: white;
 }
+
+.rol-tag {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.8rem;
+  font-style: italic;
+}

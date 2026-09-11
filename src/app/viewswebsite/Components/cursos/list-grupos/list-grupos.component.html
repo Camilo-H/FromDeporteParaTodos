@@ -1,7 +1,7 @@
 <app-sidenav>
     <div class="cabecero">
         <h1>Grupos: {{ categoria }}, {{titulo}}</h1>
-        <button class="btnAgregar" *ngIf="perfil === 'Administrador'" (click)="nuevoGrupo()">
+        <button class="btnAgregar" *ngIf="perfil === 'Coordinador'" (click)="nuevoGrupo()">
             Nuevo Grupo +
         </button>
     </div>
@@ -26,7 +26,7 @@
                     <mat-card-content class="contenido">
                         <div class="btnTitulo">
                             <button class="btn-menu" mat-icon-button [matMenuTriggerFor]="menu"
-                                *ngIf="perfil === 'Administrador'">
+                                *ngIf="perfil === 'Coordinador'">
                                 <mat-icon>settings</mat-icon>
                             </button>
                             <mat-card-title class="card_title title-three-nrs">
@@ -72,7 +72,7 @@
                                 (click)="inscribirseAcurso()">
                                 {{ inscrito ? "" : "Inscribirme" }}
                             </button>
-                            <button class="btnInscripcion" *ngIf="perfil === 'Administrador'"
+                            <button class="btnInscripcion" *ngIf="perfil === 'Coordinador'"
                                 (click)="inscribirseAcurso()">
                                 Abrir inscripciones
                             </button>

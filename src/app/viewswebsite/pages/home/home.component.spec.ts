@@ -27,7 +27,7 @@ describe('HomeComponent', () => {
     const imagenSpy   = jasmine.createSpyObj('ImagenService', ['getimagen']);
     const dialogSpy   = jasmine.createSpyObj('MatDialog', ['open']);
     const routerSpy   = jasmine.createSpyObj('Router', ['navigate']);
-    const perfilStub  = { perfil$: new BehaviorSubject<string>('Administrador').asObservable() };
+    const perfilStub  = { perfil$: new BehaviorSubject<string>('Coordinador').asObservable() };
     const tokenStub   = { tokenReady$: tokenReadySubject.asObservable() };
     const bpStub      = { observe: () => of({ matches: false, breakpoints: {} }) };
 

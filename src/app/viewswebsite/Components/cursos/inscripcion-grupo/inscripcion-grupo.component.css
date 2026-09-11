@@ -1,0 +1,104 @@
+.inscripcion-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-volver {
+  background: none;
+  border: none;
+  color: #000066;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 0;
+}
+
+.titulo {
+  color: #000066;
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.info-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.info-card h3 {
+  color: #000066;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.info-table th, .info-table td {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.info-table th {
+  color: #000066;
+  font-weight: 600;
+  width: 40%;
+}
+
+.horario-item {
+  display: block;
+  font-size: 0.9rem;
+  color: #000066;
+}
+
+.accion {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-inscribirse {
+  background-color: #000066;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 0.75rem 2.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-inscribirse:hover:not(:disabled) {
+  background-color: #0000aa;
+}
+
+.btn-inscribirse:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.inscrito-badge {
+  background-color: #2e7d32;
+  color: white;
+  border-radius: 20px;
+  padding: 0.75rem 2.5rem;
+  font-size: 1rem;
+}
+
+.cargando {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}

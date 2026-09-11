@@ -20,7 +20,7 @@ describe('SidenavComponent — cerrarSesion', () => {
   beforeEach(async () => {
     authSpy = jasmine.createSpyObj('AuthService', ['logout']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-    perfilSubject = new BehaviorSubject<string>('Administrador');
+    perfilSubject = new BehaviorSubject<string>('Coordinador');
 
     await TestBed.configureTestingModule({
       imports: [SidenavComponent, NoopAnimationsModule],

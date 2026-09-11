@@ -178,11 +178,10 @@ export class ListGruposComponent implements OnInit {
   }
 
   alumnosGrupo(categoria: string, curso: string, anio: number, iterable: number): void {
-    if (this.perfil !== 'Estudiante') {
-      this.router.navigate(['/listaDeportistasCurso', categoria, curso, anio, iterable]);
-      //this.router.navigate([param]);
+    if (this.perfil === 'Alumno') {
+      this.router.navigate(['/inscripcion-grupo', categoria, curso, anio, iterable]);
     } else {
-      alert('No tienes permiso para acceder a esta sección, comuniquese con el administrador para más información');
+      this.router.navigate(['/listaDeportistasCurso', categoria, curso, anio, iterable]);
     }
   }
 }

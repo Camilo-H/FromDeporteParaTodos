@@ -1,0 +1,75 @@
+<app-sidenav>
+
+  <div class="inscripcion-container" *ngIf="!cargando && grupo; else cargandoTpl">
+
+    <div class="encabezado">
+      <button class="btn-volver" (click)="volver()">← Volver</button>
+      <h2 class="titulo">Inscripción al grupo</h2>
+    </div>
+
+    <!-- Información del grupo -->
+    <div class="info-card">
+      <h3>Información del grupo</h3>
+      <table class="info-table">
+        <tr>
+          <th>Categoría</th>
+          <td>{{ categoria }}</td>
+        </tr>
+        <tr>
+          <th>Curso</th>
+          <td>{{ curso }}</td>
+        </tr>
+        <tr>
+          <th>Código</th>
+          <td>{{ grupo!.anio }}-{{ grupo!.periodo ?? 2 }} · Grupo {{ letraDeIterable(grupo!.iterable) }}</td>
+        </tr>
+        <tr>
+          <th>Cupos disponibles</th>
+          <td>{{ grupo!.cupos }}</td>
+        </tr>
+        <tr>
+          <th>Instructor</th>
+          <td>{{ grupo!.nombreInstructor ?? '—' }}</td>
+        </tr>
+        <tr>
+          <th>Horario</th>
+          <td>
+            <ng-container *ngIf="horarios.length > 0; else sinHorario">
+              <span *ngFor="let h of horarios" class="horario-item">
+                {{ h.dia }} {{ h.horaInicio }} – {{ h.horaFin }} · {{ h.escenario }}
+              </span>
+            </ng-container>
+            <ng-template #sinHorario>Por definir</ng-template>
+          </td>
+        </tr>
+        <tr *ngIf="grupo!.fechaInscripcionApertura">
+          <th>Inscripciones abiertas</th>
+          <td>{{ grupo!.fechaInscripcionApertura }} – {{ grupo!.fechaIncripcionCierre }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Acción de inscripción -->
+    <div class="accion">
+      <ng-container *ngIf="!yaInscrito; else inscritoTpl">
+        <button class="btn-inscribirse"
+                [disabled]="inscribiendo"
+                (click)="inscribirse()">
+          {{ inscribiendo ? 'Inscribiendo...' : 'Inscribirme en este grupo' }}
+        </button>
+      </ng-container>
+      <ng-template #inscritoTpl>
+        <div class="inscrito-badge">✓ Inscripción realizada</div>
+      </ng-template>
+    </div>
+
+  </div>
+
+  <ng-template #cargandoTpl>
+    <div class="cargando">
+      <p *ngIf="cargando">Cargando información del grupo...</p>
+      <p *ngIf="!cargando && !grupo">No se encontró información del grupo.</p>
+    </div>
+  </ng-template>
+
+</app-sidenav>

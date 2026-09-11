@@ -16,6 +16,7 @@ import { ReportesComponent } from './viewswebsite/Components/estadisticas/report
 import { InformacionEstudianteComponent } from './viewswebsite/Components/usuarios/informacion-estudiante/informacion-estudiante.component';
 import { FormAlertaComponent } from './viewswebsite/Components/usuarios/form-alerta/form-alerta.component';
 import { CompletarPerfilComponent } from './viewswebsite/pages/completar-perfil/completar-perfil.component';
+import { InscripcionGrupoComponent } from './viewswebsite/Components/cursos/inscripcion-grupo/inscripcion-grupo.component';
 
 const routes: Routes = [
   {path:'', redirectTo:'home',pathMatch:'full'},
@@ -35,6 +36,7 @@ const routes: Routes = [
   {path: 'info-estudiante', component: InformacionEstudianteComponent},
   {path: 'notificacion', component: FormAlertaComponent},
   {path: 'completar-perfil', component: CompletarPerfilComponent},
+  {path: 'inscripcion-grupo/:categoria/:curso/:anio/:iterable', component: InscripcionGrupoComponent},
 
 ];
 

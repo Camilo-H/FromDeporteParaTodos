@@ -93,7 +93,7 @@ export class CursosDeportivosComponent implements OnInit {
   }
 
   private loadCursos(categoria: any): void {
-    const request$ = this.perfil === 'Administrador'
+    const request$ = this.perfil === 'Coordinador'
       ? this.cursoService.getTodosCursosDeCategoria(categoria)
       : this.cursoService.getCursos(categoria);
 

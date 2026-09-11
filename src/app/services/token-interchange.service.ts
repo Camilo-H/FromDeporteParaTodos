@@ -3,6 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { EMPTY, Observable, Subject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+import { PerfilDTO } from '../Models/DTOs/perfil-tdo';
+import { PerfilService } from './perfil.service';
+
+interface TokenResponse {
+  token: string;
+  perfil: PerfilDTO;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -16,13 +23,17 @@ export class TokenInterchangeService {
   constructor(
     private http: HttpClient,
     private router: Router,
+    private perfilService: PerfilService,
   ) {}
 
   exchangeGoogleToken(idToken: string): Observable<void> {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${idToken}`);
-    return this.http.post<{ token: string }>(`${this.apiUrl}/auth/token`, {}, { headers }).pipe(
+    return this.http.post<TokenResponse>(`${this.apiUrl}/auth/token`, {}, { headers }).pipe(
       tap(resp => {
         sessionStorage.setItem('dpt_token', resp.token);
+        sessionStorage.setItem('dpt_role', resp.perfil.role);
+        sessionStorage.setItem('dpt_perfil_id', String(resp.perfil.id));
+        this.perfilService.setPerfil(resp.perfil.role);
         this.tokenSavedSource.next();
       }),
       map(() => void 0),

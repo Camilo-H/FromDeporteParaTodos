@@ -4,12 +4,14 @@ import { Subject } from 'rxjs';
 import { of } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { TokenInterchangeService } from './token-interchange.service';
+import { PerfilService } from './perfil.service';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let service: AuthService;
   let oauthSpy: any;
   let tokenSpy: jasmine.SpyObj<TokenInterchangeService>;
+  let perfilSpy: jasmine.SpyObj<PerfilService>;
   let eventsSubject: Subject<any>;
 
   beforeEach(() => {
@@ -35,20 +37,25 @@ describe('AuthService', () => {
     tokenSpy = jasmine.createSpyObj('TokenInterchangeService', ['exchangeGoogleToken']);
     tokenSpy.exchangeGoogleToken.and.returnValue(of(void 0));
 
+    perfilSpy = jasmine.createSpyObj('PerfilService', ['setPerfil']);
+
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
         AuthService,
         { provide: OAuthService, useValue: oauthSpy },
         { provide: TokenInterchangeService, useValue: tokenSpy },
+        { provide: PerfilService, useValue: perfilSpy },
       ],
     });
     service = TestBed.inject(AuthService);
     sessionStorage.removeItem('dpt_token');
+    sessionStorage.removeItem('dpt_role');
   });
 
   afterEach(() => {
     sessionStorage.removeItem('dpt_token');
+    sessionStorage.removeItem('dpt_role');
     eventsSubject.complete();
   });
 
@@ -82,6 +89,7 @@ describe('AuthService', () => {
         AuthService,
         { provide: OAuthService, useValue: oauthSpy },
         { provide: TokenInterchangeService, useValue: tokenSpy },
+        { provide: PerfilService, useValue: perfilSpy },
       ],
     });
     TestBed.inject(AuthService);
@@ -130,6 +138,54 @@ describe('AuthService', () => {
     service.logout();
     expect(sessionStorage.getItem('dpt_token')).toBeNull();
   });
+
+  it('logout() elimina dpt_role de sessionStorage', () => {
+    sessionStorage.setItem('dpt_role', 'Administrador');
+    service.logout();
+    expect(sessionStorage.getItem('dpt_role')).toBeNull();
+  });
+
+  // ── initLogin then(): restauración de rol ────────────────────────────────
+
+  it('initLogin() then(): restaura rol desde dpt_role en sessionStorage si existe', fakeAsync(() => {
+    sessionStorage.setItem('dpt_role', 'Instructor');
+    TestBed.resetTestingModule();
+    eventsSubject = new Subject<any>();
+    oauthSpy.events = eventsSubject.asObservable();
+    oauthSpy.loadDiscoveryDocumentAndTryLogin.and.returnValue(Promise.resolve());
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [
+        AuthService,
+        { provide: OAuthService, useValue: oauthSpy },
+        { provide: TokenInterchangeService, useValue: tokenSpy },
+        { provide: PerfilService, useValue: perfilSpy },
+      ],
+    });
+    TestBed.inject(AuthService);
+    tick();
+    expect(perfilSpy.setPerfil).toHaveBeenCalledWith('Instructor');
+  }));
+
+  it('initLogin() then(): no llama a setPerfil si dpt_role no está en sessionStorage', fakeAsync(() => {
+    sessionStorage.removeItem('dpt_role');
+    TestBed.resetTestingModule();
+    eventsSubject = new Subject<any>();
+    oauthSpy.events = eventsSubject.asObservable();
+    oauthSpy.loadDiscoveryDocumentAndTryLogin.and.returnValue(Promise.resolve());
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [
+        AuthService,
+        { provide: OAuthService, useValue: oauthSpy },
+        { provide: TokenInterchangeService, useValue: tokenSpy },
+        { provide: PerfilService, useValue: perfilSpy },
+      ],
+    });
+    TestBed.inject(AuthService);
+    tick();
+    expect(perfilSpy.setPerfil).not.toHaveBeenCalled();
+  }));
 
   // ── login ────────────────────────────────────────────────────────────────
 

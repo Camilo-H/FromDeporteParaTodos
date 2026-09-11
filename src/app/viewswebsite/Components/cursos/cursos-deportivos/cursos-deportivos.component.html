@@ -12,12 +12,12 @@
                 </div>
             </div>
 
-            <div class="col-lg-4 d-flex justify-content-center" *ngIf=" perfil === 'Administrador'">
+            <div class="col-lg-4 d-flex justify-content-center" *ngIf=" perfil === 'Coordinador'">
                 <button class="btnAgregar" (click)="registroDeporte()">
                     Agregar curso +
                 </button>
             </div>
-            <div class="col-lg-4 d-flex justify-content-center" *ngIf=" perfil === 'Administrador'">
+            <div class="col-lg-4 d-flex justify-content-center" *ngIf=" perfil === 'Coordinador'">
                 <button type="button" class="btn btn-light border"
                     (click)="configurarInscripcion()">Inscripciones</button>
             </div>
@@ -46,7 +46,7 @@
 
                     <mat-card-content class="contenido">
                         <button class="btn-menu" mat-icon-button [matMenuTriggerFor]="menu"
-                            *ngIf="perfil === 'Administrador'">
+                            *ngIf="perfil === 'Coordinador'">
                             <mat-icon>settings</mat-icon>
                         </button>
                         <mat-menu #menu="matMenu">

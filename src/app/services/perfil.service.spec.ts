@@ -42,15 +42,15 @@ describe('PerfilService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('perfil$ emite el valor inicial "Administrador"', (done) => {
+  it('perfil$ emite el valor inicial ""', (done) => {
     service.perfil$.subscribe(valor => {
-      expect(valor).toBe('Administrador');
+      expect(valor).toBe('');
       done();
     });
   });
 
-  it('getPerfil retorna el valor inicial "Administrador"', () => {
-    expect(service.getPerfil()).toBe('Administrador');
+  it('getPerfil retorna el valor inicial ""', () => {
+    expect(service.getPerfil()).toBe('');
   });
 
   it('setPerfil actualiza el valor y perfil$ emite el nuevo valor', (done) => {
@@ -75,8 +75,8 @@ describe('PerfilService', () => {
 
   it('estado inicial no está contaminado por tests anteriores (aislamiento)', () => {
     // Cada test recibe una instancia nueva — el BehaviorSubject siempre
-    // arranca en 'Administrador' sin importar el orden de ejecución.
-    expect(service.getPerfil()).toBe('Administrador');
+    // arranca en '' sin importar el orden de ejecución.
+    expect(service.getPerfil()).toBe('');
   });
 
   // ── registrarPerfil ──────────────────────────────────────────────────────

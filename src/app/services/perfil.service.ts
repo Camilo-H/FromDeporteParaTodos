@@ -10,7 +10,7 @@ export class PerfilService {
   apiUrl: string = 'http://127.0.0.1:8082/api/v2';
   constructor(private http: HttpClient) { }
 
-  private perfilSubject = new BehaviorSubject<string>('Administrador');
+  private perfilSubject = new BehaviorSubject<string>('');
   perfil$ = this.perfilSubject.asObservable();
 
   setPerfil(perfil: string) {
