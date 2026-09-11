@@ -1,0 +1,166 @@
+import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
+import { of, throwError } from 'rxjs';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { InscripcionGrupoComponent } from './inscripcion-grupo.component';
+import { GrupoService } from 'src/app/services/grupo.service';
+import { InscripcionesService } from 'src/app/services/inscripciones.service';
+import { HorarioService } from 'src/app/services/horario.service';
+import { InstructorServisce } from 'src/app/services/instructor.service';
+import { PerfilService } from 'src/app/services/perfil.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { TokenInterchangeService } from 'src/app/services/token-interchange.service';
+
+const mockGrupo = {
+  categoria: 'Recreativo', curso: 'Natacion', anio: 2026, iterable: 1,
+  cupos: 15, idInstructor: 'INS-01', nombreInstructor: '', imagenGrupo: null,
+  fechaCreacion: '2026-01-01', fechaFinalizacion: null,
+  fechaInscripcionApertura: null, fechaIncripcionCierre: null,
+};
+const mockHorarios = [
+  { dia: 'LUNES', horaInicio: '08:00', horaFin: '10:00', escenario: 'Coliseo' },
+];
+const mockInstructor = { nombre: 'Juan Perez', id: 'INS-01' };
+
+describe('InscripcionGrupoComponent', () => {
+  let component: InscripcionGrupoComponent;
+  let fixture: ComponentFixture<InscripcionGrupoComponent>;
+  let grupoSpy: jasmine.SpyObj<GrupoService>;
+  let inscripcionSpy: jasmine.SpyObj<InscripcionesService>;
+  let horarioSpy: jasmine.SpyObj<HorarioService>;
+  let instructorSpy: jasmine.SpyObj<InstructorServisce>;
+  let snackOpen: jasmine.Spy;
+  let routerSpy: jasmine.SpyObj<Router>;
+
+  beforeEach(async () => {
+    grupoSpy      = jasmine.createSpyObj('GrupoService', ['getGrupo']);
+    inscripcionSpy = jasmine.createSpyObj('InscripcionesService', ['postInscripcion']);
+    horarioSpy    = jasmine.createSpyObj('HorarioService', ['getHorarios']);
+    instructorSpy = jasmine.createSpyObj('InstructorServisce', ['getInstructor']);
+    routerSpy     = jasmine.createSpyObj('Router', ['navigate']);
+
+    grupoSpy.getGrupo.and.returnValue(of({ ...mockGrupo } as any));
+    horarioSpy.getHorarios.and.returnValue(of(mockHorarios as any));
+    instructorSpy.getInstructor.and.returnValue(of(mockInstructor as any));
+
+    await TestBed.configureTestingModule({
+      imports: [InscripcionGrupoComponent, HttpClientTestingModule, NoopAnimationsModule],
+      providers: [
+        DatePipe,
+        { provide: GrupoService,       useValue: grupoSpy },
+        { provide: InscripcionesService, useValue: inscripcionSpy },
+        { provide: HorarioService,     useValue: horarioSpy },
+        { provide: InstructorServisce, useValue: instructorSpy },
+        { provide: Router,             useValue: routerSpy },
+        { provide: PerfilService,      useValue: { perfil$: of('') } },
+        { provide: AuthService,        useValue: jasmine.createSpyObj('AuthService', ['login', 'logout', 'isAuthenticated', 'getProfile']) },
+        { provide: TokenInterchangeService, useValue: {} },
+        { provide: OAuthService,       useValue: { configure: () => {}, setupAutomaticSilentRefresh: () => {}, events: of(), loadDiscoveryDocumentAndTryLogin: () => Promise.resolve(), getIdentityClaims: () => null, hasValidAccessToken: () => false, hasValidIdToken: () => false } },
+        {
+          provide: ActivatedRoute,
+          useValue: { paramMap: of(convertToParamMap({
+            categoria: 'Recreativo', curso: 'Natacion', anio: '2026', iterable: '1',
+          })) },
+        },
+      ],
+      schemas: [NO_ERRORS_SCHEMA],
+    }).compileComponents();
+
+    fixture   = TestBed.createComponent(InscripcionGrupoComponent);
+    component = fixture.componentInstance;
+    sessionStorage.removeItem('dpt_perfil_id');
+    fixture.detectChanges();
+    // Espiar el snackBar real inyectado en el componente
+    snackOpen = spyOn(component['snackBar'], 'open');
+  });
+
+  afterEach(() => sessionStorage.removeItem('dpt_perfil_id'));
+
+  it('debería crearse correctamente', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('ngOnInit(): lee los params de ruta y llama a cargarGrupo()', () => {
+    expect(component.categoria).toBe('Recreativo');
+    expect(component.curso).toBe('Natacion');
+    expect(component.anio).toBe(2026);
+    expect(component.iterable).toBe(1);
+    expect(grupoSpy.getGrupo).toHaveBeenCalledWith('Recreativo', 'Natacion', 2026, 1);
+  });
+
+  it('cargarGrupo(): carga grupo y horarios correctamente', () => {
+    expect(component.grupo).toBeTruthy();
+    expect(component.grupo!.cupos).toBe(15);
+    expect(component.horarios.length).toBe(1);
+    expect(component.cargando).toBeFalse();
+  });
+
+  it('cargarGrupo(): asigna nombre del instructor', () => {
+    expect(instructorSpy.getInstructor).toHaveBeenCalledWith('INS-01');
+    expect(component.grupo!.nombreInstructor).toBe('Juan Perez');
+  });
+
+  it('cargarGrupo(): muestra snackbar de error si getGrupo falla', () => {
+    grupoSpy.getGrupo.and.returnValue(throwError(() => ({ status: 500 })));
+    component.ngOnInit();
+    expect(snackOpen).toHaveBeenCalledWith(
+      jasmine.stringContaining('No se pudo cargar'), 'Cerrar', jasmine.any(Object)
+    );
+  });
+
+  it('letraDeIterable(): convierte número a letra (1→A, 2→B)', () => {
+    expect(component.letraDeIterable(1)).toBe('A');
+    expect(component.letraDeIterable(2)).toBe('B');
+    expect(component.letraDeIterable(null)).toBe('?');
+  });
+
+  it('volver(): navega de regreso a list-grupos', () => {
+    component.volver();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/list-grupos', 'Recreativo', 'Natacion']);
+  });
+
+  it('inscribirse(): muestra error si no hay dpt_perfil_id en sessionStorage', () => {
+    sessionStorage.removeItem('dpt_perfil_id');
+    component.inscribirse();
+    expect(snackOpen).toHaveBeenCalledWith(
+      jasmine.stringContaining('No se pudo identificar'), 'Cerrar', jasmine.any(Object)
+    );
+    expect(inscripcionSpy.postInscripcion).not.toHaveBeenCalled();
+  });
+
+  it('inscribirse(): POST /inscripcion exitoso → yaInscrito=true y snackbar de éxito', () => {
+    sessionStorage.setItem('dpt_perfil_id', '12345');
+    inscripcionSpy.postInscripcion.and.returnValue(of({} as any));
+    component.inscribirse();
+    expect(inscripcionSpy.postInscripcion).toHaveBeenCalledWith(
+      jasmine.objectContaining({ alumnoId: 12345, categoria: 'Recreativo', curso: 'Natacion' })
+    );
+    expect(component.yaInscrito).toBeTrue();
+    expect(snackOpen).toHaveBeenCalledWith(
+      jasmine.stringContaining('exitosamente'), 'Cerrar', jasmine.any(Object)
+    );
+  });
+
+  it('inscribirse(): error 409 → snackbar "Ya estás inscrito"', () => {
+    sessionStorage.setItem('dpt_perfil_id', '12345');
+    inscripcionSpy.postInscripcion.and.returnValue(throwError(() => ({ status: 409 })));
+    component.inscribirse();
+    expect(component.yaInscrito).toBeFalse();
+    expect(snackOpen).toHaveBeenCalledWith(
+      jasmine.stringContaining('Ya estás inscrito'), 'Cerrar', jasmine.any(Object)
+    );
+  });
+
+  it('inscribirse(): error 500 → snackbar genérico de error', () => {
+    sessionStorage.setItem('dpt_perfil_id', '12345');
+    inscripcionSpy.postInscripcion.and.returnValue(throwError(() => ({ status: 500 })));
+    component.inscribirse();
+    expect(snackOpen).toHaveBeenCalledWith(
+      jasmine.stringContaining('Error al inscribirse'), 'Cerrar', jasmine.any(Object)
+    );
+  });
+});

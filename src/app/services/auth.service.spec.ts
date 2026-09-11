@@ -1,7 +1,6 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Subject } from 'rxjs';
-import { of } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { TokenInterchangeService } from './token-interchange.service';
 import { PerfilService } from './perfil.service';
@@ -227,5 +226,18 @@ describe('AuthService', () => {
       expect(result).toEqual(profile);
       done();
     });
+  });
+
+  // ── error callback en exchangeGoogleToken ────────────────────────────────
+
+  it('token_received: llama a console.error si exchangeGoogleToken falla', () => {
+    const err = new Error('backend down');
+    tokenSpy.exchangeGoogleToken.and.returnValue(throwError(() => err));
+    spyOn(console, 'error');
+    oauthSpy.getIdToken.and.returnValue('id-tok-xyz');
+    eventsSubject.next({ type: 'token_received' });
+    expect(console.error).toHaveBeenCalledWith(
+      'Error en intercambio de token con el backend:', err
+    );
   });
 });

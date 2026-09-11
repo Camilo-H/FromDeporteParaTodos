@@ -6,7 +6,24 @@
 // instanciar a través de Angular DI (que requeriría stubs para 10 dependencias).
 // Válido porque letraDeIterable no accede a `this`.
 
+import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
+import { BehaviorSubject, of } from 'rxjs';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { OAuthService } from 'angular-oauth2-oidc';
 import { ListGruposComponent } from './list-grupos.component';
+import { GrupoService } from 'src/app/services/grupo.service';
+import { PerfilService } from 'src/app/services/perfil.service';
+import { ImagenService } from 'src/app/services/imagen.service';
+import { InstructorServisce } from 'src/app/services/instructor.service';
+import { HorarioService } from 'src/app/services/horario.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { TokenInterchangeService } from 'src/app/services/token-interchange.service';
 
 describe('ListGruposComponent › letraDeIterable', () => {
   let comp: ListGruposComponent;
@@ -22,4 +39,59 @@ describe('ListGruposComponent › letraDeIterable', () => {
   it('0   → "?" (cero es falsy)', () => expect(comp.letraDeIterable(0)).toBe('?'));
   it('-1  → "?" (negativo < 1)', () => expect(comp.letraDeIterable(-1)).toBe('?'));
   it('null → "?" (null es falsy)', () => expect(comp.letraDeIterable(null)).toBe('?'));
+});
+
+describe('ListGruposComponent › alumnosGrupo', () => {
+  let component: ListGruposComponent;
+  let fixture: ComponentFixture<ListGruposComponent>;
+  let routerSpy: jasmine.SpyObj<Router>;
+  let perfilSubject: BehaviorSubject<string>;
+
+  beforeEach(async () => {
+    routerSpy     = jasmine.createSpyObj('Router', ['navigate']);
+    perfilSubject = new BehaviorSubject<string>('');
+
+    await TestBed.configureTestingModule({
+      imports: [ListGruposComponent, HttpClientTestingModule, NoopAnimationsModule],
+      providers: [
+        { provide: Router,       useValue: routerSpy },
+        { provide: PerfilService, useValue: { perfil$: perfilSubject.asObservable() } },
+        { provide: AuthService,  useValue: jasmine.createSpyObj('AuthService', ['login', 'logout', 'isAuthenticated', 'getProfile']) },
+        { provide: TokenInterchangeService, useValue: {} },
+        { provide: OAuthService, useValue: { configure: () => {}, setupAutomaticSilentRefresh: () => {}, events: of(), loadDiscoveryDocumentAndTryLogin: () => Promise.resolve(), getIdentityClaims: () => null, hasValidAccessToken: () => false, hasValidIdToken: () => false } },
+        { provide: GrupoService,  useValue: { getGrupos: jasmine.createSpy().and.returnValue(of([])) } },
+        { provide: ImagenService, useValue: { getimagen: jasmine.createSpy().and.returnValue(of({})) } },
+        { provide: InstructorServisce, useValue: { getInstructor: jasmine.createSpy().and.returnValue(of({})) } },
+        { provide: HorarioService, useValue: { getHorarios: jasmine.createSpy().and.returnValue(of([])) } },
+        { provide: MatSnackBar,  useValue: { open: jasmine.createSpy() } },
+        { provide: MatDialog,    useValue: { open: jasmine.createSpy().and.returnValue({ afterClosed: () => of(null) }) } },
+        { provide: BreakpointObserver, useValue: { observe: jasmine.createSpy().and.returnValue(of({ matches: false })) } },
+        {
+          provide: ActivatedRoute,
+          useValue: { paramMap: of(convertToParamMap({ categoria: 'Recreativo', curso: 'Natacion' })) },
+        },
+      ],
+      schemas: [NO_ERRORS_SCHEMA],
+    }).compileComponents();
+
+    fixture   = TestBed.createComponent(ListGruposComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('alumnosGrupo(): rol "Alumno" navega a /inscripcion-grupo', () => {
+    component.perfil = 'Alumno';
+    component.alumnosGrupo('Recreativo', 'Natacion', 2026, 1);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(
+      ['/inscripcion-grupo', 'Recreativo', 'Natacion', 2026, 1]
+    );
+  });
+
+  it('alumnosGrupo(): rol "Coordinador" navega a /listaDeportistasCurso', () => {
+    component.perfil = 'Coordinador';
+    component.alumnosGrupo('Recreativo', 'Natacion', 2026, 2);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(
+      ['/listaDeportistasCurso', 'Recreativo', 'Natacion', 2026, 2]
+    );
+  });
 });

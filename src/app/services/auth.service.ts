@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
-import { HttpClient } from '@angular/common/http';
-import { PerfilDTO } from '../Models/DTOs/perfil-tdo';
-import { catchError, throwError, Observable, from, filter, take } from 'rxjs';
+import { Observable, from, filter, take } from 'rxjs';
 import { TokenInterchangeService } from './token-interchange.service';
 import { PerfilService } from './perfil.service';
 
@@ -10,11 +8,8 @@ import { PerfilService } from './perfil.service';
   providedIn: 'root'
 })
 export class AuthService {
-  urlApi: string = 'http://127.0.0.1:8082/api/v2';
-
   constructor(
     private oauthService: OAuthService,
-    private http: HttpClient,
     private tokenInterchangeService: TokenInterchangeService,
     private perfilService: PerfilService,
   ) {
@@ -64,15 +59,6 @@ export class AuthService {
         this.perfilService.setPerfil(role);
       }
     });
-  }
-
-  verificarUsuario(email: string) {
-    this.http.get<PerfilDTO>(`${this.urlApi}/login?email=${encodeURIComponent(email)}`).pipe(
-    ).subscribe(
-      (data) => {
-        console.log('Respuesta del servico de autenticación backend', data);
-      }
-    );
   }
 
   login() {
